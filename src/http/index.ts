@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-// export const API_URL = 'https://protected-mountain-35851-f22d2a82ae2c.herokuapp.com/api'
-export const API_URL = 'http://localhost:5000/api'
+// export const API_URL = 'http://protected-mountain-35851-f22d2a82ae2c.herokuapp.com/api'
+export const API_URL = 'https://protected-mountain-35851-f22d2a82ae2c.herokuapp.com/api'
 
 const $api = axios.create({
     withCredentials:true,
