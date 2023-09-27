@@ -9,6 +9,7 @@ import ReportService from "../services/ReportService";
 export default class Store {
     user = {} as IUser;
     isAuth = false;
+    isCheckAuth = false;
     isLoading = false;
 
     constructor() {
@@ -17,6 +18,10 @@ export default class Store {
 
     setAuth(bool: boolean) {
         this.isAuth = bool
+    }
+
+    setIsCheckAuth(bool: boolean) {
+        this.isCheckAuth = bool
     }
 
     setUser(user: IUser) {
@@ -28,6 +33,7 @@ export default class Store {
     }
 
     async login(email: string, password: string) {
+        this.setLoading(true)
         try {
             const response = await AuthService.login(email, password);
             console.log(response);
@@ -36,6 +42,8 @@ export default class Store {
             this.setUser(response.data.user);
         } catch (e: any) {
             console.log(e.response?.data?.message)
+        } finally {
+            this.setLoading(false)
         }
     }
 
@@ -52,6 +60,7 @@ export default class Store {
     }
 
     async logout() {
+        this.setLoading(true)
         try {
             const response = await AuthService.logout();
             localStorage.removeItem('token');
@@ -59,17 +68,21 @@ export default class Store {
             this.setUser({} as IUser);
         } catch (e: any) {
             console.log(e.response?.data?.message)
+        } finally {
+            this.setLoading(false)
         }
     }
 
     async checkAuth() {
         this.setLoading(true)
         try {
+            // debugger
             const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, {withCredentials: true});
             console.log(response);
             localStorage.setItem('token', response.data.accessToken);
             this.setAuth(true);
-            this.setUser(response.data.user)
+            this.setUser(response.data.user);
+            this.setIsCheckAuth(true);
         } catch (e: any) {
             console.log(e.response?.data?.message)
         } finally {

@@ -96,12 +96,8 @@ const LoginForm: FC = () => {
                         <FormHelperText id="component-error-password">{errors.password?.message}</FormHelperText>}
                 </FormControl>
                 <span className={s.label} style={{marginTop:'30px'}}>Если вы не зарегистрированы обратитесь к администратору</span>
-                {/*<Button variant="contained" onClick={()=>store.login(email, password)}>Login</Button>*/}
-                {/*<Button variant="contained" onClick={()=>store.registration(email, password)}>Registration</Button>*/}
-                <Button className={s.signInButton} sx={{marginTop: '30px', width: '100%', height:'60px'}} variant="contained"
+                <Button disabled={store.isLoading} className={s.signInButton} sx={{marginTop: '30px', width: '100%', height:'60px'}} variant="contained"
                         type="submit">Войти</Button>
-                {/*<Button variant="contained" onClick={()
-                +=> store.registration(email, password)}>Registration</Button>*/}
             </form>
         </>
     )

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {AuthResponse} from "../models/response/AuthRethponse";
 
-export const API_URL = process.env.API_URL
+export const API_URL = 'https://protected-mountain-35851-f22d2a82ae2c.herokuapp.com/api'
 
 const $api = axios.create({
     withCredentials:true,
@@ -17,7 +17,7 @@ $api.interceptors.response.use((config) => {
     return config;
 }, async ( error ) => {
     const originalRequest = error.config;
-    if (error.response.status == 401 && error.config && !error.config._isRetry) {
+    if (error.response.status === 401 && error.config && !error.config._isRetry) {
         originalRequest._isRetry = true;
         try {
             const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, {withCredentials: true});

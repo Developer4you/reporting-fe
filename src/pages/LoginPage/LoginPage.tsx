@@ -1,12 +1,19 @@
 import React, {FC, useContext, useState} from "react";
 import s from "./LoginPage.module.css"
 import LoginForm from "../../components/LoginForm";
-// import topLogo from "../../assets/logo.png";
+import {Context} from "../../index";
+import {Navigate} from "react-router-dom";
+import {observer} from "mobx-react-lite";
+import topLogo from "../../assets/logo.png";
 
 const LoginPage: FC = () => {
+    // debugger
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
-    // const {store} = useContext(Context)
+    const {store} = useContext(Context)
+    console.log('Render LoginPage')
+    if (store.isAuth) return <Navigate replace to="/user" />
+
 
     return (
         <section className={s.loginPageWrapper}>
@@ -17,9 +24,9 @@ const LoginPage: FC = () => {
                         <p className={s.largeSmall}>система автоматизированной отчетности</p>
                     </div>
                     <div className={s.loginFormWrapper}>
-                        {/*<img src={topLogo} alt="logo"*/}
-                        {/*     className={s.topLogo}/>*/}
-                        <div>LOGO</div>
+                        <img src={topLogo} alt="logo"
+                             className={s.topLogo}/>
+
                         <LoginForm/>
                         <div className={s.version}>
                             version 1.0
@@ -31,4 +38,4 @@ const LoginPage: FC = () => {
     )
 }
 
-export default LoginPage
+export default observer(LoginPage)
