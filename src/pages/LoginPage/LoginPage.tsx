@@ -1,7 +1,7 @@
 import React, {FC, useContext, useState} from "react";
 import s from "./LoginPage.module.css"
 import LoginForm from "../../components/LoginForm";
-import topLogo from "../../assets/logo.png";
+// import topLogo from "../../assets/logo.png";
 
 const LoginPage: FC = () => {
     const [email, setEmail] = useState<string>('')
