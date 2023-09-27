@@ -2,6 +2,9 @@ import React, {createContext} from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import Store from "./store/store"
+import { ThemeProvider } from '@mui/material/styles';
+import theme from './theme';
+import {CssBaseline} from "@mui/material";
 
 interface State {
     store: Store,
@@ -18,6 +21,9 @@ const root = ReactDOM.createRoot(
 );
 root.render(
     <Context.Provider value={{store}}>
-        <App />
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <App />
+        </ThemeProvider>
     </Context.Provider>
 );

@@ -5,12 +5,16 @@ import {observer} from "mobx-react-lite";
 import loader from "./assets/loader.gif";
 import {IUser} from "./models/IUser";
 import UserService from "./services/UserService";
+import {Button} from "@mui/material";
+import s from "./App.module.css"
+import LoginPage from "./pages/LoginPage/LoginPage";
+import ReportsPage from "./pages/ReportsPage/ReportsPage";
 
 const App: FC = () => {
     const {store} = useContext(Context)
     const [users, setUsers] = useState<IUser[]>([])
 
-    useEffect(()=>{
+    useEffect(() => {
         if (localStorage.getItem('token')) {
             store.checkAuth()
         }
@@ -28,26 +32,32 @@ const App: FC = () => {
     if (store.isLoading) return (
         <img src={loader} alt="loader"/>
     )
-    
+
     if (!store.isAuth) return (
-        <LoginForm/>
+        <LoginPage/>
     )
 
-  return (
-    <div>
-        <h1>
-            {store.isAuth ? `Вы авторизованы ${store.user.email}` : 'АВТОРИЗУЙТЕСЬ'}
-        </h1>
-        <h1>{store.user.isActivated ? 'Аккаунт подтвержден по почте' : 'ПОДТВЕРДИТЕ АККАУНТ!!!'}</h1>
-        <button onClick={ () => store.logout()}>Выйти</button>
-        <div>
-            <button onClick={getUsers}>
-                Ge Users
-            </button>
-            {users.map(user=><div key={user.email}>{user.email}</div>)}
+    return (
+        <div className={s.app}>
+            <header className={s.mainHeader}>
+                <div className={s.headerWrap}>
+                    <div>
+                        {store.isAuth ? `Вы авторизованы ${store.user.email}` : 'АВТОРИЗУЙТЕСЬ'}
+                    </div>
+                    <div>{store.user.isActivated ? 'Аккаунт подтвержден по почте' : 'ПОДТВЕРДИТЕ АККАУНТ!!!'}</div>
+                    <Button variant="contained" onClick={() => store.logout()}>Выйти</Button>
+                </div>
+            </header>
+
+            <ReportsPage/>
+            {/*<div>*/}
+            {/*    <Button variant="contained" onClick={getUsers}>*/}
+            {/*        Ge Users*/}
+            {/*    </Button>*/}
+            {/*    {users.map(user=><div key={user.email}>{user.email}</div>)}*/}
+            {/*</div>*/}
         </div>
-    </div>
-  );
+    );
 }
 
 export default observer(App);

@@ -4,6 +4,7 @@ import AuthService from "../services/AuthService";
 import axios from 'axios';
 import {AuthResponse} from "../models/response/AuthRethponse";
 import {API_URL} from "../http";
+import ReportService from "../services/ReportService";
 
 export default class Store {
     user = {} as IUser;
@@ -14,11 +15,11 @@ export default class Store {
         makeAutoObservable(this)
     }
 
-    setAuth(bool:boolean) {
+    setAuth(bool: boolean) {
         this.isAuth = bool
     }
 
-    setUser(user:IUser) {
+    setUser(user: IUser) {
         this.user = user;
     }
 
@@ -26,38 +27,41 @@ export default class Store {
         this.isLoading = bool
     }
 
-    async login(email:string, password: string) {
+    async login(email: string, password: string) {
         try {
             const response = await AuthService.login(email, password);
             console.log(response);
             localStorage.setItem('token', response.data.accessToken);
             this.setAuth(true);
             this.setUser(response.data.user);
-        } catch (e:any) {
+        } catch (e: any) {
             console.log(e.response?.data?.message)
         }
     }
-    async registration(email:string, password: string) {
+
+    async registration(email: string, password: string) {
         try {
             const response = await AuthService.registration(email, password);
             console.log(response);
             localStorage.setItem('token', response.data.accessToken);
             this.setAuth(true);
             this.setUser(response.data.user);
-        } catch (e:any) {
+        } catch (e: any) {
             console.log(e.response?.data?.message)
         }
     }
+
     async logout() {
         try {
             const response = await AuthService.logout();
             localStorage.removeItem('token');
             this.setAuth(false);
             this.setUser({} as IUser);
-        } catch (e:any) {
+        } catch (e: any) {
             console.log(e.response?.data?.message)
         }
     }
+
     async checkAuth() {
         this.setLoading(true)
         try {
@@ -66,10 +70,19 @@ export default class Store {
             localStorage.setItem('token', response.data.accessToken);
             this.setAuth(true);
             this.setUser(response.data.user)
-        } catch (e:any) {
+        } catch (e: any) {
             console.log(e.response?.data?.message)
         } finally {
             this.setLoading(false)
+        }
+    }
+
+    async sendReport(diesel: number, dieselInTank: number, petrol80: number, petrol80InTank: number, petrol95: number, petrol95InTank: number) {
+        try {
+            const response = await ReportService.sendReport(diesel, dieselInTank, petrol80, petrol80InTank, petrol95, petrol95InTank);
+            console.log(response);
+        } catch (e: any) {
+            console.log(e.response?.data?.message)
         }
     }
 }
