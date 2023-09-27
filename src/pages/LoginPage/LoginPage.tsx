@@ -19,6 +19,7 @@ const LoginPage: FC = () => {
                     <div className={s.loginFormWrapper}>
                         {/*<img src={topLogo} alt="logo"*/}
                         {/*     className={s.topLogo}/>*/}
+                        <div>LOGO</div>
                         <LoginForm/>
                         <div className={s.version}>
                             version 1.0
