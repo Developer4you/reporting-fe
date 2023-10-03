@@ -14,11 +14,13 @@ const App: FC = () => {
             store.checkAuth()
         } else store.setIsCheckAuth(true)
     }, [])
-
-    console.log('Render App')
+    console.log('store.user.email', store.user.email)
     if (store.isCheckAuth) if (!store.isAuth) {
         return <Navigate replace to="/login"/>
     } else {
+        if (store.user.email==='221674@mail.ru') {
+            return <Navigate replace to="/main-user"/>
+        }
         return <Navigate replace to="/user"/>
     }
 

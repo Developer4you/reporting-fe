@@ -4,49 +4,33 @@ import {Navigate} from "react-router-dom";
 import loader from "../../assets/loader.gif";
 import {observer} from "mobx-react-lite";
 import {Box, Button, Container, Link, Paper, Typography} from "@mui/material";
-import Reports from "./Reports";
-import Report from "./Report";
+import {ReportType} from "../UserPage/UserPage";
+import {AddUserModalWindow} from "./AddUserModalWindow";
 
-export type ReportType = {
-    diesel: number
-    dieselInTank: number
-    petrol80: number
-    petrol80InTank: number
-    petrol95: number
-    petrol95InTank: number
-}
-
-export type ReportsType = {
-    date: string
-    _id: string
-    _user: string
-    report: ReportType
-}
-
-const UserPage: FC = () => {
+const MainUserPage: FC = () => {
     const {store} = useContext(Context)
     const [reportToShow, setReportToShow] = useState<ReportType | null>(null)
     const [reportDate, setReportDate] = useState('')
     const currentDate = new Date();
     const currentDayOfWeek = currentDate.getDay();
     const isFriday = currentDayOfWeek === 4;
+    let reportsDates;
 
-    const choseReportHandler = (id:string) => {
-        if (store.reports) {
-            const rep = store.reports.find(e=>e._id===id)
 
-            if (rep) {setReportToShow(rep.report)
-            setReportDate(rep.date.split('T')[0])}
-        }
+    if (store.allReportsData) {
+        reportsDates = Object.keys(store.allReportsData);
+        console.log('reportsDates', reportsDates)
     }
 
+
     useEffect(() => {
-        store.getUserReports()
+        store.getAllReports()
     }, [])
 
     if (store.isLoading) return (
         <img src={loader} alt="loader" style={{margin: "40vh 40vw"}}/>
     )
+
 
     return (<>
             <Container maxWidth="md" sx={{
@@ -63,7 +47,7 @@ const UserPage: FC = () => {
                         <Typography sx={{
                             marginRight: 5
                         }}>
-                            {store.isAuth ? `Вы зашли под пользователем ${store.user.email}` :
+                            {store.isAuth ? `Вы зашли как главный пользователь ${store.user.email}` :
                                 <Navigate replace to="/"/>}
                         </Typography>
                         <div>{store.user.isActivated ? '' : 'ПОДТВЕРДИТЕ АККАУНТ!!!'}</div>
@@ -72,28 +56,32 @@ const UserPage: FC = () => {
                 </header>
                 <Paper sx={{
                     padding: "20px",
-                    height: 500
+                    minHeight: 600
                 }}>
                     <>
-                        {isFriday && (<Box>
-                            <Typography>
-                                <h1>Внимание!</h1>
-                                Сегодня Вам необходимо направить отчет об остатках топлива!
-                            </Typography>
-                            <Button variant="contained" href="/reports">Подготовить и направить отчет</Button>
-                        </Box>)}
+                        В настоящий момент имеются отчеты по следующим датам
                         <Box>
-                            <Reports reports={store.reports} callback={choseReportHandler}/>
-                            {reportToShow&&<Report reportToShow={reportToShow} reportDate={reportDate}/>}
-                        </Box>
+                            {reportsDates && reportsDates.map(e => {
+                                return (
+                                    <Button variant="outlined" key={e} sx={{margin: 1}}>
+                                        {
+                                            e.split('T')[0]
+                                        }
+                                    </Button>
 
+                                )
+                            })}
+                        </Box>
                     </>
                 </Paper>
-                <Button variant="contained" href="/reports">Подать отчет</Button>
-            </Container>
+                <Box sx={{display: "flex"}}>
+                    <Button variant="contained" href="/main-user-table">Перейти к сводной таблице</Button>
+                    <AddUserModalWindow/>
+                </Box>
 
+            </Container>
         </>
     );
 }
 
-export default observer(UserPage);
+export default observer(MainUserPage);

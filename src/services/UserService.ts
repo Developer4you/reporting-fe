@@ -1,9 +1,9 @@
 import {AxiosResponse} from "axios";
 import $api from "../http";
-import {IUser} from "../models/IUser";
+import {IUserReport} from "../models/IUserReport";
 
 export default class UserService {
-    static async fetchUsers():Promise<AxiosResponse<IUser[]>>{
-        return $api.get<IUser[]>('/users')
+    static async fetchUsers():Promise<AxiosResponse<IUserReport[]>>{
+        return $api.get<IUserReport[]>('/getUserReports')
     }
 }

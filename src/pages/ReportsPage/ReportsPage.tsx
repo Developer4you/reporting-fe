@@ -8,9 +8,13 @@ import {
     FormControl,
     FormHelperText,
     InputLabel,
-    OutlinedInput
+    OutlinedInput,
+    Typography
 } from "@mui/material";
 import * as yup from "yup";
+import {IUserReport} from "../../models/IUserReport";
+import {Navigate} from "react-router-dom";
+import {observer} from "mobx-react-lite";
 
 const signInSchema = yup.object().shape({
     diesel: yup.number().required("Это поле обязательно к заполнению"),
@@ -47,6 +51,11 @@ const ReportsPage: FC = () => {
             data.petrol80, data.petrol80InTank,
             data.petrol95, data.petrol95InTank);
     };
+    if (store.requestStatus==="success") {
+        alert("Отчет успешно отправлен")
+        store.setRequestStatus("empty")
+        return <Navigate replace to="/user"/>
+    }
 
     return (
         <>
@@ -54,7 +63,7 @@ const ReportsPage: FC = () => {
                 onSubmit={handleSubmit(onSubmit)}
                 className={s.formWrapper}
             >
-                <h1 className={s.handler}>Отчет по остаткам топлива</h1>
+                <Typography className={s.handler}>Отчет по остаткам топлива</Typography>
                 <span className={s.label}>Введите складские остатки дизельного топлива</span>
                 <FormControl className={s.input} error={errors.diesel ? true : false} sx={{m: 1, width: '100%'}}
                              variant="outlined">
@@ -150,4 +159,4 @@ const ReportsPage: FC = () => {
     )
 }
 
-export default ReportsPage
+export default observer(ReportsPage)

@@ -12,8 +12,12 @@ const LoginPage: FC = () => {
     const [password, setPassword] = useState<string>('')
     const {store} = useContext(Context)
     console.log('Render LoginPage')
-    if (store.isAuth) return <Navigate replace to="/user" />
-
+    if (store.isAuth) if (store.user.email === "221674@mail.ru") {
+        return <Navigate replace to="/main-user"/>
+    } else {
+        return <Navigate replace to="/user"/>
+    }
+    // store.registration("bragin@maill.ru", "bragin", "Брагинский отдел");
 
     return (
         <section className={s.loginPageWrapper}>

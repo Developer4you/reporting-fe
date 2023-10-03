@@ -18,6 +18,7 @@ import s from "./LoginForm.module.css";
 import {Simulate} from "react-dom/test-utils";
 import submit = Simulate.submit;
 import {Visibility, VisibilityOff} from "@mui/icons-material";
+import {type} from "os";
 
 const signInSchema = yup.object().shape({
     userEmail: yup
@@ -26,14 +27,20 @@ const signInSchema = yup.object().shape({
         .email('Пожалуйста проверьте адресс эл. почты')
         .required("Это поле обязательно к заполнению"),
     password: yup.string().trim().required("Это поле обязательно к заполнению"),
+    name: yup.string().trim().required("Это поле обязательно к заполнению"),
 });
 
 type FormData = {
     userEmail: string;
     password: string;
+    name: string;
 };
 
-const LoginForm: FC = () => {
+type PropsType = {
+    handleClose: ()=>void
+}
+
+const RegistrationForm: FC<PropsType> = ({handleClose}) => {
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const {store} = useContext(Context)
@@ -46,7 +53,8 @@ const LoginForm: FC = () => {
         event.preventDefault();
     };
     const onSubmit: SubmitHandler<FormData> = (data: any) => {
-        store.login(data.userEmail, data.password);
+        store.registration(data.userEmail, data.password, data.name);
+       handleClose()
     };
 
     return (
@@ -55,6 +63,20 @@ const LoginForm: FC = () => {
                 onSubmit={handleSubmit(onSubmit)}
                 className={s.formWrapper}
             >
+                <span className={s.label}>Введите имя пользователя</span>
+                <FormControl className={s.name} error={errors.name ? true : false} sx={{m: 1, width: '100%'}}
+                             variant="outlined">
+                    <InputLabel htmlFor="outlined-adornment-name">Наименование</InputLabel>
+                    <OutlinedInput id="outlined-adornment-name"
+                                   type='text'
+                                   {...register('name', {
+                                       required: 'Наименование введено неверно',
+                                   })}
+                                   label="name"
+                    />
+                    {errors?.name &&
+                        <FormHelperText id="component-error-text">{errors.name?.message}</FormHelperText>}
+                </FormControl>
                 <span className={s.label}>Введите электронную почту пользователя</span>
                 <FormControl className={s.inputEmail} error={errors.userEmail ? true : false} sx={{m: 1, width: '100%'}}
                              variant="outlined">
@@ -107,4 +129,4 @@ const LoginForm: FC = () => {
     )
 }
 
-export default observer(LoginForm)
+export default observer(RegistrationForm)
