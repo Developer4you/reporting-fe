@@ -1,6 +1,5 @@
 {
   "name": "reporting-fe",
-  "homepage": "https://https://developer4you.github.io/reporting-fe",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

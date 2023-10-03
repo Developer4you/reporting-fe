@@ -72,7 +72,7 @@ const ReportsTable: FC = () => {
                     ))}
                 </TableBody>
             </Table>
-            <Button variant="contained" href="/main-user" sx={{margin:"0 auto"}}>Вернутся</Button>
+            <Button variant="contained" href="#/main-user" sx={{margin:"0 auto"}}>Вернутся</Button>
         </TableContainer>
     );
 }

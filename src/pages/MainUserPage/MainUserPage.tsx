@@ -75,7 +75,7 @@ const MainUserPage: FC = () => {
                     </>
                 </Paper>
                 <Box sx={{display: "flex"}}>
-                    <Button variant="contained" href="/main-user-table">Перейти к сводной таблице</Button>
+                    <Button variant="contained" href="#/main-user-table">Перейти к сводной таблице</Button>
                     <AddUserModalWindow/>
                 </Box>
 

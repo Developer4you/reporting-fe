@@ -6,7 +6,7 @@ import Store from "./store/store"
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import {CssBaseline} from "@mui/material";
-import {router} from "./router/router";
+import {Rout} from "./router/router";
 
 interface State {
     store: Store,
@@ -22,7 +22,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <Context.Provider value={{store}}>
         <ThemeProvider theme={theme}>
             <CssBaseline/>
-            <RouterProvider router={router} />
+            <Rout />
         </ThemeProvider>
     </Context.Provider>,
 );

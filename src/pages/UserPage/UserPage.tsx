@@ -89,7 +89,7 @@ const UserPage: FC = () => {
 
                     </>
                 </Paper>
-                <Button variant="contained" href="/reports">Подать отчет</Button>
+                <Button variant="contained" href="#/reports">Подать отчет</Button>
             </Container>
 
         </>
