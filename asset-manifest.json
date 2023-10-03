@@ -1,14 +1,16 @@
 {
   "files": {
-    "main.css": "//developer4you.github.io/reporting-fe/static/css/main.8101cb12.css",
-    "main.js": "//developer4you.github.io/reporting-fe/static/js/main.c6e99d9b.js",
+    "main.css": "//developer4you.github.io/reporting-fe/static/css/main.3b1fa13f.css",
+    "main.js": "//developer4you.github.io/reporting-fe/static/js/main.020f1868.js",
     "static/media/loader.gif": "//developer4you.github.io/reporting-fe/static/media/loader.ab7e58f2b0f0a230aed4.gif",
+    "static/media/loginBg.jpeg": "//developer4you.github.io/reporting-fe/static/media/loginBg.564d891c6cd33fc99a07.jpeg",
+    "static/media/logo.png": "//developer4you.github.io/reporting-fe/static/media/logo.d8756a0a1143e86f06d9.png",
     "index.html": "//developer4you.github.io/reporting-fe/index.html",
-    "main.8101cb12.css.map": "//developer4you.github.io/reporting-fe/static/css/main.8101cb12.css.map",
-    "main.c6e99d9b.js.map": "//developer4you.github.io/reporting-fe/static/js/main.c6e99d9b.js.map"
+    "main.3b1fa13f.css.map": "//developer4you.github.io/reporting-fe/static/css/main.3b1fa13f.css.map",
+    "main.020f1868.js.map": "//developer4you.github.io/reporting-fe/static/js/main.020f1868.js.map"
   },
   "entrypoints": [
-    "static/css/main.8101cb12.css",
-    "static/js/main.c6e99d9b.js"
+    "static/css/main.3b1fa13f.css",
+    "static/js/main.020f1868.js"
   ]
 }
