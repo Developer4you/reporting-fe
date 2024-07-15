@@ -8,6 +8,7 @@ import ReportService from "../services/ReportService";
 import {AllReportsDateType, IUserReport, RowType} from "../models/IUserReport";
 
 type RequestStatusType = 'empty'| 'success'| 'waiting'| 'error'
+type PositionType = {position: string, position_name: string, okrb: string}
 export default class Store {
     user = {} as IUser;
     report = {} as IUserReport
@@ -18,9 +19,19 @@ export default class Store {
     allReportsData = {} as AllReportsDateType
     isPending = false
     requestStatus:RequestStatusType = 'empty'
+    emails = [] as string[]
+    planPositions = [] as PositionType[]
 
     constructor() {
         makeAutoObservable(this)
+    }
+
+    setEmails(array:string[]){
+        this.emails = [...array]
+    }
+
+    setPlanPositions(array:PositionType[]){
+        this.planPositions = [...array]
     }
 
     setAuth(bool: boolean) {
@@ -91,6 +102,57 @@ export default class Store {
         }
     }
 
+    async getEmails(okrb:string) {
+        try {
+            this.setRequestStatus("waiting");
+            this.setIsPending(true)
+            const response = await ReportService.getEmails(okrb);
+            console.log(response);
+            this.setEmails(response.data)
+            this.setRequestStatus("success");
+        } catch (e: any) {
+            console.log(e.response?.data?.message)
+            this.setRequestStatus("error");
+        }
+        finally {
+            this.setIsPending(false)
+        }
+    }
+
+    async sendEmail(emails:string[]) {
+        try {
+            this.setRequestStatus("waiting");
+            this.setIsPending(true)
+            const response = await ReportService.sendEmails(emails);
+            console.log(response);
+            this.setPlanPositions(response.data)
+            this.setRequestStatus("success");
+        } catch (e: any) {
+            console.log(e.response?.data?.message)
+            this.setRequestStatus("error");
+        }
+        finally {
+            this.setIsPending(false)
+        }
+    }
+
+    async getPlanPositions(productName:string) {
+        try {
+            this.setRequestStatus("waiting");
+            this.setIsPending(true)
+            const response = await ReportService.getPlanPosition(productName);
+            console.log(response);
+            this.setPlanPositions(response.data)
+            this.setRequestStatus("success");
+        } catch (e: any) {
+            console.log(e.response?.data?.message)
+            this.setRequestStatus("error");
+        }
+        finally {
+            this.setIsPending(false)
+        }
+    }
+
     async checkAuth() {
         this.setLoading(true)
         try {
@@ -98,11 +160,11 @@ export default class Store {
             localStorage.setItem('token', response.data.accessToken);
             this.setAuth(true);
             this.setUser(response.data.user);
-            this.setIsCheckAuth(true);
         } catch (e: any) {
             console.log(e.response?.data?.message)
         } finally {
             this.setLoading(false)
+            this.setIsCheckAuth(true)
         }
     }
 

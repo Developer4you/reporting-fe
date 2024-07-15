@@ -11,18 +11,26 @@ const App: FC = () => {
 
     useEffect(() => {
         if (localStorage.getItem('token')) {
+            console.log('localStorage getItem token')
             store.checkAuth()
-        } else store.setIsCheckAuth(true)
+        } else {
+            console.log('setIsCheckAuth true')
+            store.setIsCheckAuth(true)}
     }, [])
+
     console.log('store.user.email', store.user.email)
-    if (store.isCheckAuth) if (!store.isAuth) {
+    console.log('store.isCheckAuth', store.isCheckAuth)
+    if (store.isCheckAuth) {
+        console.log('store.isAuth',store.isAuth)
+        if (!store.isAuth) {
+            console.log('Navigate replace to login')
         return <Navigate replace to="/login"/>
     } else {
         if (store.user.email==='221674@mail.ru') {
             return <Navigate replace to="/main-user"/>
         }
         return <Navigate replace to="/user"/>
-    }
+    }}
 
     return (
         <Container>
