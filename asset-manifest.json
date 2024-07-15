@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "//developer4you.github.io/reporting-fe/static/css/main.3b1fa13f.css",
-    "main.js": "//developer4you.github.io/reporting-fe/static/js/main.e29aeff9.js",
-    "static/media/loader.gif": "//developer4you.github.io/reporting-fe/static/media/loader.ab7e58f2b0f0a230aed4.gif",
-    "static/media/loginBg.jpeg": "//developer4you.github.io/reporting-fe/static/media/loginBg.564d891c6cd33fc99a07.jpeg",
-    "static/media/logo.png": "//developer4you.github.io/reporting-fe/static/media/logo.d8756a0a1143e86f06d9.png",
-    "index.html": "//developer4you.github.io/reporting-fe/index.html",
-    "main.3b1fa13f.css.map": "//developer4you.github.io/reporting-fe/static/css/main.3b1fa13f.css.map",
-    "main.e29aeff9.js.map": "//developer4you.github.io/reporting-fe/static/js/main.e29aeff9.js.map"
+    "main.css": "/reporting-fe/static/css/main.6a4e7df0.css",
+    "main.js": "/reporting-fe/static/js/main.bc4aa909.js",
+    "static/media/loader.gif": "/reporting-fe/static/media/loader.ab7e58f2b0f0a230aed4.gif",
+    "static/media/loginBg.jpeg": "/reporting-fe/static/media/loginBg.564d891c6cd33fc99a07.jpeg",
+    "static/media/logo.png": "/reporting-fe/static/media/logo.d8756a0a1143e86f06d9.png",
+    "index.html": "/reporting-fe/index.html",
+    "main.6a4e7df0.css.map": "/reporting-fe/static/css/main.6a4e7df0.css.map",
+    "main.bc4aa909.js.map": "/reporting-fe/static/js/main.bc4aa909.js.map"
   },
   "entrypoints": [
-    "static/css/main.3b1fa13f.css",
-    "static/js/main.e29aeff9.js"
+    "static/css/main.6a4e7df0.css",
+    "static/js/main.bc4aa909.js"
   ]
 }
