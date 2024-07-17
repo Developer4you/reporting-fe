@@ -1,23 +1,26 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
+import GiasService from "../services/GiasService";
+import {useQuery} from "@tanstack/react-query";
+import loader from "../assets/loader.gif";
 
 const PurchasesComponent: React.FC = () => {
-    const [purchases, setPurchases] = useState<any[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
-    const fetchData = async () => {
-        try {
-            const response = await axios.get<any[]>('https://developer4you-forgias-srv-4ed8.twc1.net', {
-                params: {
-                    contextTextSearch: searchTerm, // Передаем параметр поиска
-                },
-            }); // Используем GET запрос
-            setPurchases(response.data.filter(e=>(e!==null&&e.contractsInfo[0]?.contractPositions[0]?.unitPrice)));
 
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
+    const fetchData = async () => {
+        const response = await GiasService.getSuppliers(searchTerm);
+        return response.data.filter((e: any) => (e !== null && e.contractsInfo[0]?.contractPositions[0]?.unitPrice));
     };
-    console.log(purchases)
+
+    const { data, error, isError, isSuccess, isLoading, refetch } = useQuery({
+        queryKey: ['suppliers', searchTerm],
+        queryFn: fetchData
+    });
+
+    useEffect(() => {
+        refetch();
+    }, [searchTerm, refetch]);
+
     return (
         <div>
             <h1>Purchases Component</h1>
@@ -27,17 +30,27 @@ const PurchasesComponent: React.FC = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Введите искомое слово"
             />
-            <button onClick={fetchData}>Fetch Purchases</button>
-            <ul>
-                {purchases.map((e, index) => (
-                        <>
-                        <li key={index}>{e.contractsInfo[0]?.contractPositions[0]?.titlePosition}</li>
-                        <li key={index}>{e.contractsInfo[0]?.contractPositions[0]?.unitPrice}</li>
-                        <li key={index}>{e.contractsInfo[0]?.sellerInfo.name}</li>
-                        <li>--------------------------------------------</li>
-                    </>
-                ))}
-            </ul>
+            {/*<button onClick={() => refetch()}>Fetch Purchases</button>*/}
+            {isLoading ? (
+                <div>
+                    <img src={loader} alt="loader" style={{margin: "5px 5px", width:"50px"}}/>
+                </div>
+            ) : isError ?
+                <div>
+                    {searchTerm===''?<span>Введите поисковую строку</span>:<span>Извините, поиск не дал результата</span> }
+                </div>
+                :(
+                <ul>
+                    {data && data.map((e:any, index:number) => (
+                        <React.Fragment key={index}>
+                            <li>{e.contractsInfo[0]?.contractPositions[0]?.titlePosition}</li>
+                            <li>{e.contractsInfo[0]?.contractPositions[0]?.unitPrice}</li>
+                            <li>{e.contractsInfo[0]?.sellerInfo.name}</li>
+                            <li>--------------------------------------------</li>
+                        </React.Fragment>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 };
