@@ -24,12 +24,12 @@ const queryClient = new QueryClient()
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <Context.Provider value={{store}}>
-        <ThemeProvider theme={theme}>
+        {/*<ThemeProvider theme={theme}>*/}
             <QueryClientProvider client={queryClient}>
-                <CssBaseline/>
+                {/*<CssBaseline/>*/}
                 <Rout />
                 <ReactQueryDevtools initialIsOpen={false} />
             </QueryClientProvider>
-        </ThemeProvider>
+        {/*</ThemeProvider>*/}
     </Context.Provider>,
 );

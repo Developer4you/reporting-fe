@@ -41,6 +41,10 @@ const MainUserPage: FC = () => {
         store.getEmails(okrb)
     }
 
+    const getLettersHandler = () => {
+        store.getLetters()
+    }
+
     const getPositionsHandler = () => {
         store.getPlanPositions(productName)
     }
@@ -52,7 +56,6 @@ const MainUserPage: FC = () => {
         store.sendEmail(array)
     }
 
-
     useEffect(() => {
         store.getAllReports()
     }, [])
@@ -62,7 +65,7 @@ const MainUserPage: FC = () => {
     )
 
     return (<>
-            <Container maxWidth="md" sx={{
+            <Container maxWidth="lg" sx={{
                 padding: 2,
                 minHeight: "100vh"
             }}>
@@ -83,7 +86,39 @@ const MainUserPage: FC = () => {
                         <Button variant="contained" onClick={() => store.logout()}>Выйти</Button>
                     </Paper>
                 </header>
-                <PurchasesComponent />
+
+                <Box sx={{display:"flex"}}>
+                    <Paper sx={{
+                        margin: "10px 10px 10px 0",
+                        minWidth:"20vw",
+                        textAlign: "left",
+                        display: "flex",
+                        justifyContent: "start"
+                    }}>
+                        <PurchasesComponent />
+                    </Paper>
+                    <Paper sx={{
+                        margin: "10px 0 10px 10px",
+                        textAlign: "left",
+                    }}>
+                        <Box>
+                            <Button variant="contained" onClick={()=>getLettersHandler()}>Get letters</Button>
+                        </Box>
+                        <Box>
+                            {
+                                store.letters.map((e:any)=>
+                                    <Box sx={{marginBottom:5, whiteSpace: 'pre-wrap'}}>
+                                        {e.from}
+                                        {e.text}
+
+                                    </Box>
+                                )
+                            }
+                        </Box>
+                    </Paper>
+                </Box>
+
+
                 <Box sx={{}}>
                     {store.emails.map((e) => <Box key={e}>
                         {e}

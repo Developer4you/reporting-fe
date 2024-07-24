@@ -6,6 +6,7 @@ import {AuthResponse} from "../models/response/AuthRethponse";
 import {API_URL} from "../http";
 import ReportService from "../services/ReportService";
 import {AllReportsDateType, IUserReport, RowType} from "../models/IUserReport";
+import { Buffer } from 'buffer';
 
 type RequestStatusType = 'empty'| 'success'| 'waiting'| 'error'
 type PositionType = {position: string, position_name: string, okrb: string}
@@ -21,9 +22,23 @@ export default class Store {
     requestStatus:RequestStatusType = 'empty'
     emails = [] as string[]
     planPositions = [] as PositionType[]
+    letters = [] as any
 
     constructor() {
         makeAutoObservable(this)
+    }
+
+    setLetters(letters:any[]){
+        const decodedLetters:any[] = letters.map(item => {
+            const base64Content = item.text.split('\r\n\r\n')
+            const index = base64Content.findIndex((e:string)=>e.includes('text/plain'))
+            const decodedContent = Buffer.from(base64Content[index+1], 'base64').toString('utf-8');
+            return {
+                ...item,
+                text: decodedContent
+            };
+        });
+        this.letters = decodedLetters;
     }
 
     setEmails(array:string[]){
@@ -99,6 +114,22 @@ export default class Store {
             console.log(e.response?.data?.message)
         } finally {
             this.setLoading(false)
+        }
+    }
+
+    async getLetters() {
+        try {
+            this.setRequestStatus("waiting");
+            this.setIsPending(true)
+            const response = await ReportService.getLetters();
+            this.setLetters(response.data.resData)
+            this.setRequestStatus("success");
+        } catch (e: any) {
+            console.log(e.response?.data?.message)
+            this.setRequestStatus("error");
+        }
+        finally {
+            this.setIsPending(false)
         }
     }
 

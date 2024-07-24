@@ -3,6 +3,9 @@ import $api from "../http";
 
 
 export default class ReportService {
+    static async getLetters(): Promise<AxiosResponse<any>>{
+        return $api.get<any>('/getLetters')
+    }
     static async sendEmails(emails:string[]): Promise<AxiosResponse<any>>{
         return $api.post<any>('/send-email', {emails})
     }
