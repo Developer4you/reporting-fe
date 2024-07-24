@@ -1,6 +1,5 @@
 body {
-    /*background: linear-gradient(45deg, rgb(159, 204, 255) 4%, rgb(222, 238, 251) 69%)*/
-    background-color:black;
+    background: linear-gradient(45deg, rgb(159, 204, 255) 4%, rgb(222, 238, 251) 69%)
 }
 
 * {
