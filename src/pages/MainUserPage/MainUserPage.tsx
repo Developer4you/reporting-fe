@@ -37,7 +37,7 @@ const MainUserPage: FC = () => {
     }
 
     const getEmailsHandler = () => {
-        store.setEmails([])
+        store.setEmails('')
         store.getEmails(okrb)
     }
 
@@ -120,10 +120,9 @@ const MainUserPage: FC = () => {
 
 
                 <Box sx={{}}>
-                    {store.emails.map((e) => <Box key={e}>
-                        {e}
-                    </Box>)}
-                    {store.emails.length&&<Button variant="contained" onClick={()=>sendMailhandler(store.emails)}>Сделать рассылку</Button>}
+                    <div dangerouslySetInnerHTML={{ __html: store.emails }} />
+                    {/*{store.emails}*/}
+                    {/*{store.emails.length&&<Button variant="contained" onClick={()=>sendMailhandler(store.emails)}>Сделать рассылку</Button>}*/}
 
                     <Box sx={{display: "flex", margin: "10px", marginLeft: "0"}}>
                         <TextField sx={{marginRight: "10px"}} onChange={okrbOnChangeHandler} value={okrb}

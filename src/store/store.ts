@@ -10,6 +10,11 @@ import { Buffer } from 'buffer';
 
 type RequestStatusType = 'empty'| 'success'| 'waiting'| 'error'
 type PositionType = {position: string, position_name: string, okrb: string}
+
+type company = {
+    name:string
+    emails:string
+}
 export default class Store {
     user = {} as IUser;
     report = {} as IUserReport
@@ -20,7 +25,7 @@ export default class Store {
     allReportsData = {} as AllReportsDateType
     isPending = false
     requestStatus:RequestStatusType = 'empty'
-    emails = [] as string[]
+    emails = ''
     planPositions = [] as PositionType[]
     letters = [] as any
 
@@ -41,8 +46,8 @@ export default class Store {
         this.letters = decodedLetters;
     }
 
-    setEmails(array:string[]){
-        this.emails = [...array]
+    setEmails(str:string){
+        this.emails = str
     }
 
     setPlanPositions(array:PositionType[]){
