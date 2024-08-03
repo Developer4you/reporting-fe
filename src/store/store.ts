@@ -66,6 +66,7 @@ export default class Store {
         this.user = user;
     }
 
+
     setLoading(bool: boolean) {
         this.isLoading = bool
     }
