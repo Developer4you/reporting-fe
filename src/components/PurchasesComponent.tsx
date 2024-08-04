@@ -1,11 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import GiasService from "../services/GiasService";
 import {useQuery} from "@tanstack/react-query";
 import loader from "../assets/loader.gif";
-import {Box, Checkbox} from "@mui/material";
+import {Box, Button, Checkbox} from "@mui/material";
+import html2pdf from 'html2pdf.js';
 import s from "./PurchasesComponent.module.css"
 import clsx from "clsx";
+import {ReactToPrint} from "react-to-print";
 const UNIT: { [key: string]: string } = { 876: "единица", 796: "штука", 778: "упаковка", GX2: "пачка", 736: "рулон", 166: "киллограмм", 112: "литр" };
 
 type ContractPositionType = {
@@ -29,6 +31,7 @@ const PurchasesComponent: React.FC = () => {
     const [checked, setChecked] = useState<boolean>(true);
     const [selectedPositions, setSelectedPositions] = useState<ContractPositionType[]>([]);
     const [limitPrice, setLimitPrice] = useState<number>(0);
+    const componentRef = useRef(null);
 
     const handleChange = () => {
         setChecked((prev:boolean) => !prev);
@@ -150,7 +153,11 @@ const PurchasesComponent: React.FC = () => {
                     })}
                 </ul>
             )}
-            <Box>
+            <ReactToPrint
+                trigger={() => <Button variant="contained">Print</Button>}
+                content={() => componentRef.current}
+            />
+            <Box ref={componentRef}>
                 <h3>Выбранные позиции:</h3>
                 <div className={s.tableGrid}>
                     <div className={s.headerItem}>Выбрано позиций</div>
