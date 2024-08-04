@@ -7,9 +7,13 @@
     background-color: lightblue;
 }
 
+.labelSelected {
+    background-color: pink;
+}
+
 .tableGrid {
     display: grid;
-    grid-template-columns: 5fr 1fr 1fr;
+    grid-template-columns: 3fr 3fr 1fr 1fr;
     gap: 5px; /* Расстояние между элементами таблицы */
     padding: 5px; /* Внутренние отступы для таблицы */
 }

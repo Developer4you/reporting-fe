@@ -5,6 +5,7 @@ import {useQuery} from "@tanstack/react-query";
 import loader from "../assets/loader.gif";
 import {Box, Checkbox} from "@mui/material";
 import s from "./PurchasesComponent.module.css"
+import clsx from "clsx";
 const UNIT: { [key: string]: string } = { 876: "единица", 796: "штука", 778: "упаковка", GX2: "пачка", 736: "рулон", 166: "киллограмм", 112: "литр" };
 
 type ContractPositionType = {
@@ -20,6 +21,7 @@ type ContractPositionType = {
     type:string
     unitPrice: number
     volume:number
+    sellerName?:string
 }
 
 const PurchasesComponent: React.FC = () => {
@@ -117,11 +119,11 @@ const PurchasesComponent: React.FC = () => {
                                 {e.sellerInfo.name}
                                 {e.contractPositions.map((el: any) => {
                                     return <>
-                                        <li key={el.id} style={{backgroundColor:
-                                                selectedPositions.some((pos:ContractPositionType) => pos.id === el.id)?"red":"unset"
-                                        }} className={s.label} onClick={()=>selectPositionHandler(el)}>
+                                        <li key={el.id}
+                                            className={clsx(`${s.label} ${selectedPositions.some((pos:ContractPositionType) => pos.id === el.id)?s.labelSelected:''}`)}
+                                            onClick={()=>selectPositionHandler({...el, sellerName:e.sellerInfo.name})}>
                                             {el.titlePosition}
-                                            {` цена за ${UNIT[unitCode]}: ${el.unitPrice} рублей, код ОКРБ ${el.codeOKPB}`}
+                                            {` цена за ${UNIT[unitCode]}: ${el.unitPrice} рублей, код ОКРБ ${el.codeOKPB}, страна: ${el.countryProducts[0]}`}
                                         </li>
                                     </>
                                 })}
@@ -135,11 +137,11 @@ const PurchasesComponent: React.FC = () => {
                                     .map((el: ContractPositionType) => {
                                     return <>
                                         {e.sellerInfo.name}
-                                        <li key={el.id} style={{backgroundColor:
-                                                selectedPositions.some((pos:ContractPositionType) => pos.id === el.id)?"red":"unset"
-                                        }} className={s.label} onClick={()=>selectPositionHandler(el)}>
+                                        <li key={el.id}
+                                            className={clsx(`${s.label} ${selectedPositions.some((pos:ContractPositionType) => pos.id === el.id)?s.labelSelected:''}`)}
+                                            onClick={()=>selectPositionHandler({...el, sellerName:e.sellerInfo.name})}>
                                             {el.titlePosition}
-                                            {` цена за ${UNIT[unitCode]}: ${el.unitPrice} рублей, код ОКРБ ${el.codeOKPB}`}
+                                            {` цена за ${UNIT[unitCode]}: ${el.unitPrice} рублей, код ОКРБ ${el.codeOKPB}, страна: ${el.countryProducts[0]}`}
                                         </li>
                                     </>
                                 })}
@@ -154,6 +156,7 @@ const PurchasesComponent: React.FC = () => {
                     <div className={s.headerItem}>Выбрано позиций</div>
                     <div className={s.headerItem}>Предельная цена</div>
                     <div className={s.headerItem}>Валюта</div>
+                    <div className={s.headerItem}></div>
                     <div className={s.tableItem}>{selectedPositions.length}</div>
                     <div className={s.tableItem}>{limitPrice}</div>
                     <div className={s.tableItem}>{'бел.рублей'}</div>
@@ -163,12 +166,14 @@ const PurchasesComponent: React.FC = () => {
                         {/*<div>{`Наименование: ${e.titlePosition}, цена за ${UNIT[e.codeUnit]}: ${e.unitPrice} бел.рублей`}</div>*/}
                         <div className={s.tableGrid}>
                             <div className={s.headerItem}>Наименование</div>
+                            <div className={s.headerItem}>Номер процедуры</div>
                             <div className={s.headerItem}>Единица измерения</div>
                             <div className={s.headerItem}>Цена за единицу</div>
 
                             {selectedPositions.map((item, index) => (
                                 <React.Fragment key={index}>
-                                    <div className={s.tableItem} onClick={()=>selectPositionHandler(item)}>{item.titlePosition}</div>
+                                    <div className={s.tableItem} onClick={()=>selectPositionHandler(item)}>{`${item.titlePosition}, страна: ${item.countryProducts[0]}`}</div>
+                                    <div className={s.tableItem} onClick={()=>selectPositionHandler(item)}>{item.sellerName}</div>
                                     <div className={s.tableItem} onClick={()=>selectPositionHandler(item)}>{UNIT[item.codeUnit]}</div>
                                     <div className={s.tableItem} onClick={()=>selectPositionHandler(item)}>{item.unitPrice}</div>
                                 </React.Fragment>
