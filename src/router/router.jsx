@@ -4,6 +4,7 @@ import App from '../App'
 import LoginPage from '../pages/LoginPage/LoginPage'
 import ReportsPage from '../pages/ReportsPage/ReportsPage'
 import UserPage from '../pages/UserPage/UserPage'
+import GuestPage from '../pages/GuestPage/GuestPage'
 import MainUserPage from '../pages/MainUserPage/MainUserPage'
 import ReportsTable from '../pages/MainUserPage/ReportsTable'
 
@@ -15,6 +16,7 @@ export function Rout() {
                 <Route path="/login" element={<LoginPage />}/>
                 <Route path="/reports" element={<ReportsPage />}/>
                 <Route path="/user" element={<UserPage />}/>
+                <Route path="/guest" element={<GuestPage />}/>
                 <Route path="/main-user" element={<MainUserPage />}/>
                 <Route path="/main-user-table" element={<ReportsTable />}/>
             </Routes>

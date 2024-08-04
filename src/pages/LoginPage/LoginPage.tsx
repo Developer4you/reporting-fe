@@ -7,14 +7,16 @@ import {observer} from "mobx-react-lite";
 import topLogo from "../../assets/logo.png";
 
 const LoginPage: FC = () => {
-    // debugger
+
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const {store} = useContext(Context)
-    console.log('Render LoginPage')
+
     if (store.isAuth) if (store.user.email === "221674@mail.ru") {
         return <Navigate replace to="/main-user"/>
-    } else {
+    } else if (store.user.email === "cmdrgou@mail.ru")
+        {return <Navigate replace to="/guest"/>}
+    else {
         return <Navigate replace to="/user"/>
     }
     // store.registration("bragin@maill.ru", "bragin", "Брагинский отдел");
@@ -24,8 +26,8 @@ const LoginPage: FC = () => {
             <div className={s.backgroundWrapper}>
                 <div className={s.content}>
                     <div className={s.textContainer}>
-                        <p className={s.textLarge}>Авто-отчетность</p>
-                        <p className={s.largeSmall}>система автоматизированной отчетности</p>
+                        <p className={s.textLarge}>Закупщик</p>
+                        <p className={s.largeSmall}>электронная система для изучения конъюнктуры рынка</p>
                     </div>
                     <div className={s.loginFormWrapper}>
                         <img src={topLogo} alt="logo"

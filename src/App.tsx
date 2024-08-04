@@ -28,8 +28,11 @@ const App: FC = () => {
     } else {
         if (store.user.email==='221674@mail.ru') {
             return <Navigate replace to="/main-user"/>
+        } else if (store.user.email === "cmdrgou@mail.ru")
+        {return <Navigate replace to="/guest"/>}
+        else {
+            return <Navigate replace to="/user"/>
         }
-        return <Navigate replace to="/user"/>
     }}
 
     return (
