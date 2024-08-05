@@ -7,6 +7,7 @@ import {API_URL} from "../http";
 import ReportService from "../services/ReportService";
 import {AllReportsDateType, IUserReport, RowType} from "../models/IUserReport";
 import { Buffer } from 'buffer';
+import GiasService from "../services/GiasService";
 
 type RequestStatusType = 'empty'| 'success'| 'waiting'| 'error'
 type PositionType = {position: string, position_name: string, okrb: string}
@@ -28,6 +29,7 @@ export default class Store {
     emails = ''
     planPositions = [] as PositionType[]
     letters = [] as any
+    units = {} as any
 
     constructor() {
         makeAutoObservable(this)
@@ -44,6 +46,10 @@ export default class Store {
             };
         });
         this.letters = decodedLetters;
+    }
+
+    setUnits(units:any){
+        this.units = units;
     }
 
     setEmails(str:string){
@@ -136,6 +142,17 @@ export default class Store {
         }
         finally {
             this.setIsPending(false)
+        }
+    }
+
+    async getUnits() {
+        try {
+            const response = await GiasService.getUnits();
+            console.log('units', response)
+            this.setUnits(response.data)
+
+        } catch (e: any) {
+        console.log(e.response?.data?.message)
         }
     }
 

@@ -28,7 +28,7 @@ const GuestPage: FC = () => {
 
 
     useEffect(() => {
-
+        store.getUnits()
         }, [])
 
     if (store.isLoading) return (

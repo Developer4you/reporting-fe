@@ -9,4 +9,7 @@ export default class GiasService {
             },
         })
     }
+    static async getUnits(): Promise<AxiosResponse<any>> {
+        return $api.get<any[]>('/getUnits')
+    }
 }
