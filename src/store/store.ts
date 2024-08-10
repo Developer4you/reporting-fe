@@ -12,9 +12,32 @@ import GiasService from "../services/GiasService";
 type RequestStatusType = 'empty'| 'success'| 'waiting'| 'error'
 type PositionType = {position: string, position_name: string, okrb: string}
 
+export type ContractPositionType = {
+    codeOKPB: string
+    codeUnit: string
+    countryProducts: string[]
+    id: string
+    idSmp?: string
+    lotId: string
+    positionPrice: number
+    publicNumer: string
+    titlePosition: string
+    type: string
+    unitPrice: number
+    volume: number
+    sellerName?: string
+    contractNum?:string
+}
+
 type company = {
     name:string
     emails:string
+}
+
+type OKRBcodesType = {
+    codeOKRB:string
+    nameOKRB:string
+    count:number
 }
 export default class Store {
     user = {} as IUser;
@@ -30,9 +53,24 @@ export default class Store {
     planPositions = [] as PositionType[]
     letters = [] as any
     units = {} as any
+    okrbCodes = [] as OKRBcodesType[]
+    contractsPositions = [] as any[]
+    exactMatchMode = true
 
     constructor() {
         makeAutoObservable(this)
+    }
+
+    setExactMatchMode(value:boolean){
+        this.exactMatchMode = value;
+    }
+    setContractsPositions (contractsPositions:any) {
+        this.contractsPositions = [...contractsPositions]
+        console.log('this.contractsPositions',[...this.contractsPositions])
+    }
+
+    setOkrbCodes(okrbCodes:OKRBcodesType[]){
+        this.okrbCodes=[...okrbCodes]
     }
 
     setLetters(letters:any[]){
@@ -102,6 +140,45 @@ export default class Store {
             this.setLoading(false)
         }
     }
+
+    getAllContractPosition(flattenedContractsInfo:any, searchTerm:string=''){
+        let allPositions:ContractPositionType[] = [];
+        if (flattenedContractsInfo?.length) {
+        flattenedContractsInfo.forEach((contract:any) => {
+            contract.contractPositions.forEach((position:any)=>{
+                allPositions.push({...position, contractNum:contract.contractNum, sellerName:contract.sellerInfo.name})})
+        });
+        if (this.exactMatchMode) allPositions =
+            allPositions.filter(e=>e.titlePosition.toLowerCase().includes(searchTerm.toLowerCase()))
+        this.setContractsPositions(allPositions);}
+    }
+
+    async countAndSortOKRB(searchTerm:string, flattenedContractsInfo?:any) {
+        const allPositions = this.contractsPositions
+        const allPositionsFiltered = allPositions.filter(e=>e.titlePosition.toLowerCase().includes(searchTerm.toLowerCase()));
+        const codes:string[] = allPositionsFiltered.map(e=>e.codeOKPB)
+        const response = await GiasService.getOkrbName([...new Set(codes)]);
+        console.log('response.data OKRB:',response.data)
+        const codeOKRBnames = response.data
+        const codeCount:any = {};
+        codes.forEach((code:string) => {
+            if (codeCount[code]) {
+                codeCount[code]++;
+            } else {
+                codeCount[code] = 1;
+            }
+        });
+        console.log('codeCount', codeCount)
+        console.log('codeOKRBnames', codeOKRBnames)
+        const result = Object.keys(codeCount).map(key => ({
+            codeOKRB: key,
+            nameOKRB: codeOKRBnames.find((e:any)=>e.codeOKRB===key).nameOKRB,
+            count: codeCount[key]
+        }));
+        result.sort((a, b) => b.count - a.count);
+        this.setOkrbCodes(result);
+    }
+
 
     async registration(email: string, password: string, name: string) {
         try {

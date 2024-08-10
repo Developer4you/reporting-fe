@@ -4,54 +4,35 @@ import GiasService from "../services/GiasService";
 import {useQuery} from "@tanstack/react-query";
 import loader from "../assets/loader.gif";
 import {Box, Button, Checkbox} from "@mui/material";
-import html2pdf from 'html2pdf.js';
 import s from "./PurchasesComponent.module.css"
 import clsx from "clsx";
 import {ReactToPrint} from "react-to-print";
 import {Context} from "../index";
-
-const UNIT: { [key: string]: string } = {
-    876: "единица",
-    796: "штука",
-    778: "упаковка",
-    GX2: "пачка",
-    736: "рулон",
-    166: "киллограмм",
-    112: "литр"
-};
-
-type ContractPositionType = {
-    codeOKPB: string
-    codeUnit: string
-    countryProducts: string[]
-    id: string
-    idSmp?: string
-    lotId: string
-    positionPrice: number
-    publicNumer: string
-    titlePosition: string
-    type: string
-    unitPrice: number
-    volume: number
-    sellerName?: string
-}
+import {observer} from "mobx-react-lite";
+import {ContractPositionType} from "../store/store";
 
 const PurchasesComponent: React.FC = () => {
     const {store} = useContext(Context)
     const [searchTerm, setSearchTerm] = useState<string>('');
-    const [checked, setChecked] = useState<boolean>(true);
     const [selectedPositions, setSelectedPositions] = useState<ContractPositionType[]>([]);
     const [limitPrice, setLimitPrice] = useState<number>(0);
     const [itemCount, setItemCount] = useState<number>(1);
-    const componentRef = useRef(null);
+    const [codeOKRB, setCodeOKRB] = useState<string>('');
+    const componentRef = useRef(null); //для печати
 
-    const handleChange = () => {
-        setChecked((prev: boolean) => !prev);
+    const handleChange = (val: boolean) => {
+        store.setExactMatchMode(val);
     };
 
     const handleChangeItemCount = (count: number) => {
         setItemCount(count);
     };
+
+    const getEmailsHandler = (okrb:string) => {
+        store.setEmails('')
+        store.getEmails(okrb)
+        setCodeOKRB(okrb)
+    }
 
     const limitPriceCounter = (prices: number[]) => {
         if (prices.length === 0) return 0
@@ -70,7 +51,8 @@ const PurchasesComponent: React.FC = () => {
 
     const fetchData = async () => {
         const response = await GiasService.getSuppliers(searchTerm);
-        return response.data.filter((e: any) => (e !== null && e.contractsInfo[0]?.contractPositions[0]?.unitPrice));
+        const resp = response.data.filter((e: any) => (e !== null && e.contractsInfo[0]?.contractPositions[0]?.unitPrice)).flatMap((item: any) => item.contractsInfo);
+        return resp;
     };
 
     const {data, error, isError, isSuccess, isLoading, refetch} = useQuery({
@@ -78,12 +60,15 @@ const PurchasesComponent: React.FC = () => {
         queryFn: fetchData
     });
 
-    const flattenedContractsInfo = data?.flatMap((item: any) => item.contractsInfo)
-    console.log('flattenedContractsInfo: ', flattenedContractsInfo);
-
     useEffect(() => {
         refetch();
-    }, [searchTerm, refetch, checked]);
+    }, [searchTerm, refetch]);
+
+    useEffect(() => {
+        store.setEmails('')
+        store.getAllContractPosition(data, searchTerm)
+        store.countAndSortOKRB(searchTerm, data)
+    }, [data])
 
     useEffect(() => {
         const prices = selectedPositions.map(e => e.unitPrice)
@@ -92,8 +77,8 @@ const PurchasesComponent: React.FC = () => {
     console.log('data:', data);
 
     return (
-        <div>
-            <h3>Введите предмет закупки</h3>
+        <div className={s.purchasesContainer}>
+            <div>Введите предмет закупки</div>
             <div style={{display: "flex", justifyContent: "space-between"}}>
                 <div>
                     <input
@@ -104,18 +89,20 @@ const PurchasesComponent: React.FC = () => {
                         style={{minWidth: "500px", marginBottom: 5}}
                     />
                     <Checkbox
-                        checked={checked}
-                        onChange={handleChange}
+                        checked={store.exactMatchMode}
+                        onChange={(event, checked) => handleChange(checked)}
                         inputProps={{'aria-label': 'controlled'}}
                     />
-                    <span>Показывать все позиции договора</span>
+                    <span>Режим точных совпадений</span>
                 </div>
+                {/*{(data?.length) && !isLoading && <Button variant="contained"*/}
+                {/*                                         onClick={() => store.countAndSortOKRB(searchTerm, data)}>Подобрать*/}
+                {/*    код ОКРБ</Button>}*/}
                 <ReactToPrint
                     trigger={() => <Button variant="contained">Печать результата</Button>}
                     content={() => componentRef.current}
                 />
             </div>
-            {/*<button onClick={() => refetch()}>Fetch Purchases</button>*/}
             {isLoading ? (
                 <div style={{display: "flex"}}>
                     <img src={loader} alt="loader" style={{margin: "0px 5px", width: "25px"}}/>
@@ -125,107 +112,87 @@ const PurchasesComponent: React.FC = () => {
                 <div>
                     {searchTerm === '' ? <span></span> : <span>Извините, поиск не дал результата</span>}
                 </div>
-                : (
-                    <ul style={{
-                        maxHeight: "200px",
-                        overflowY: "auto",
-                        padding: "10px",
-                        boxSizing: "border-box",
-                        border: "1px solid lightgrey",
-                    }}>
-                        {flattenedContractsInfo.map((e: any, index: number) => {
+                : (<div className={s.searchPurchasesBox}>
+                        <ul className={s.contractInfo}><>
+                            {store.contractsPositions.map((el: ContractPositionType) => <li key={el.id}
+                                                                                            className={clsx(`${s.label} ${selectedPositions.some((pos: ContractPositionType) => pos.id === el.id) ? s.labelSelected : ''}`)}
+                                                                                            onClick={() => selectPositionHandler(el)}>
+                                    <div className={s.contractLabel}>
+                                        {`Договор ${el.contractNum} c ${el.sellerName}`}
+                                    </div>
+                                    {el.titlePosition}
+                                    {` цена за ${store.units[el.codeUnit]}: ${el.unitPrice} рублей, код ОКРБ ${el.codeOKPB}, страна: ${el.countryProducts[0]}`}
 
-                            const unitCode = e.contractPositions[0]?.codeUnit as string
-
-                            return (
-                                checked ? <Box key={index}
-                                               sx={{
-                                                   marginBottom: 2,
-                                               }}>
-                                        {e.sellerInfo.name}
-                                        {e.contractPositions.map((el: any) => {
-                                            return <>
-                                                <li key={el.id}
-                                                    className={clsx(`${s.label} ${selectedPositions.some((pos: ContractPositionType) => pos.id === el.id) ? s.labelSelected : ''}`)}
-                                                    onClick={() => selectPositionHandler({
-                                                        ...el,
-                                                        sellerName: e.sellerInfo.name
-                                                    })}>
-                                                    {el.titlePosition}
-                                                    {` цена за ${store.units[unitCode]}: ${el.unitPrice} рублей, код ОКРБ ${el.codeOKPB}, страна: ${el.countryProducts[0]}`}
-                                                </li>
-                                            </>
-                                        })}
-                                    </Box> :
-                                    <Box key={index}
-                                         sx={{
-                                             marginBottom: 2,
-                                         }}>
-                                        {e.contractPositions.filter((el: any) => el.titlePosition.toLowerCase()
-                                            .includes(searchTerm.toLowerCase()))
-                                            .map((el: ContractPositionType) => {
-                                                return <>
-                                                    {e.sellerInfo.name}
-                                                    <li key={el.id}
-                                                        className={clsx(`${s.label} ${selectedPositions.some((pos: ContractPositionType) => pos.id === el.id) ? s.labelSelected : ''}`)}
-                                                        onClick={() => selectPositionHandler({
-                                                            ...el,
-                                                            sellerName: e.sellerInfo.name
-                                                        })}>
-                                                        {el.titlePosition}
-                                                        {` цена за ${store.units[unitCode]}: ${el.unitPrice} рублей, код ОКРБ ${el.codeOKPB}, страна: ${el.countryProducts[0]}`}
-                                                    </li>
-                                                </>
-                                            })}
-                                    </Box>
+                                </li>
                             )
-                        })}
-                    </ul>
-                )}
-            <Box ref={componentRef}>
-                <h3>Выбранные позиции:</h3>
-                <div className={s.tableGrid}>
-                    <div className={s.headerItem}>Необходимое количество единиц товара</div>
-                    <div className={s.headerItem}>Выбрано позиций</div>
-                    <div className={s.headerItem}>Предельная цена</div>
-                    <div className={s.headerItem}>Валюта</div>
-                    <div className={s.tableItem}>
-                        <input
-                            type="number"
-                            value={itemCount}
-                            onChange={(e) => handleChangeItemCount(Number(e.target.value))}
-                        />
-                    </div>
-                    <div className={s.tableItem}>{selectedPositions.length}</div>
-                    <div className={s.tableItem}>{limitPrice}</div>
-                    <div className={s.tableItem}>{'бел.рублей'}</div>
-                </div>
-                {/*{selectedPositions.map((e)=>*/}
-                <div>
-                    {/*<div>{`Наименование: ${e.titlePosition}, цена за ${UNIT[e.codeUnit]}: ${e.unitPrice} бел.рублей`}</div>*/}
-                    <div className={s.tableGrid}>
-                        <div className={s.headerItem}>Наименование</div>
-                        <div className={s.headerItem}>Номер процедуры</div>
-                        <div className={s.headerItem}>Единица измерения</div>
-                        <div className={s.headerItem}>Цена за единицу</div>
+                            }
+                        </>
+                        </ul>
 
-                        {selectedPositions.map((item, index) => (
-                            <React.Fragment key={index}>
-                                <div className={s.tableItem}
-                                     onClick={() => selectPositionHandler(item)}>{`${item.titlePosition}, страна: ${item.countryProducts[0]}`}</div>
-                                <div className={s.tableItem}
-                                     onClick={() => selectPositionHandler(item)}>{item.sellerName}</div>
-                                <div className={s.tableItem}
-                                     onClick={() => selectPositionHandler(item)}>{store.units[item.codeUnit]}</div>
-                                <div className={s.tableItem}
-                                     onClick={() => selectPositionHandler(item)}>{item.unitPrice}</div>
-                            </React.Fragment>
-                        ))}
+                        <Box className={s.selectedItemsBox} ref={componentRef}>
+                            <div>Выбранные позиции:</div>
+                            <div className={s.tableGrid}>
+                                <div className={s.headerItem}>Необходимое количество единиц товара</div>
+                                <div className={s.headerItem}>Выбрано позиций</div>
+                                <div className={s.headerItem}>Предельная цена</div>
+                                <div className={s.headerItem}>Валюта</div>
+                                <div className={s.tableItem}>
+                                    <input
+                                        type="number"
+                                        value={itemCount}
+                                        onChange={(e) => handleChangeItemCount(Number(e.target.value))}
+                                    />
+                                </div>
+                                <div className={s.tableItem}>{selectedPositions.length}</div>
+                                <div className={s.tableItem}>{limitPrice}</div>
+                                <div className={s.tableItem}>{'бел.рублей'}</div>
+                            </div>
+                            <div>
+                                <div className={s.tableGrid}>
+                                    <div className={s.headerItem}>Наименование</div>
+                                    <div className={s.headerItem}>Поставщик</div>
+                                    <div className={s.headerItem}>Единица измерения</div>
+                                    <div className={s.headerItem}>Цена за единицу</div>
+
+                                    {selectedPositions.map((item, index) => (
+                                        <React.Fragment key={index}>
+                                            <div className={s.tableItem}
+                                                 onClick={() => selectPositionHandler(item)}>{`${item.titlePosition}, страна: ${item.countryProducts[0]}`}</div>
+                                            <div className={s.tableItem}
+                                                 onClick={() => selectPositionHandler(item)}>
+                                                <div className={s.contractLabel}>
+                                                    {`Договор ${item.contractNum} c ${item.sellerName}`}
+                                                </div>
+                                            </div>
+                                            <div className={s.tableItem}
+                                                 onClick={() => selectPositionHandler(item)}>{store.units[item.codeUnit]}</div>
+                                            <div className={s.tableItem}
+                                                 onClick={() => selectPositionHandler(item)}>{item.unitPrice}</div>
+                                        </React.Fragment>
+                                    ))}
+                                </div>
+                            </div>
+                        </Box>
                     </div>
+                )}
+            <div className={s.searchPurchasesBox}>
+                <div className={s.contractInfo}>
+                    {store.okrbCodes.map(e => <div key={e.codeOKRB} onClick={()=>getEmailsHandler(e.codeOKRB)}
+                    style={{backgroundColor:(e.codeOKRB===codeOKRB)?"pink":"unset"}} className={s.okrb}>
+                        <div className={s.contractLabel}>{` (встретилось ${e.count})`}</div>
+                        <span>Код ОКРБ:</span>
+                        <span>{`${e.codeOKRB}     `}</span>
+                        <span>{e.nameOKRB}</span>
+                    </div>)}
                 </div>
-            </Box>
+                <div className={s.selectedItemsBox}>
+
+                    {codeOKRB&&store.isPending?<img src={loader} alt="loader" style={{margin: "0px 5px", width: "100px"}}/>:<div dangerouslySetInnerHTML={{ __html: store.emails }} />}
+                </div>
+            </div>
+
         </div>
     );
 };
 
-export default PurchasesComponent;
+export default observer(PurchasesComponent);

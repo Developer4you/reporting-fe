@@ -22,7 +22,6 @@ const MainUserPage: FC = () => {
     const isFriday = currentDayOfWeek === 4;
     let reportsDates;
 
-
     if (store.allReportsData) {
         reportsDates = Object.keys(store.allReportsData);
         console.log('reportsDates', reportsDates)
@@ -58,6 +57,7 @@ const MainUserPage: FC = () => {
 
     useEffect(() => {
         store.getAllReports()
+        store.getUnits()
     }, [])
 
     if (store.isLoading||store.isPending) return (

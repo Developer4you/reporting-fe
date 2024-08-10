@@ -9,6 +9,11 @@ export default class GiasService {
             },
         })
     }
+    static async getOkrbName(codes: string[]): Promise<AxiosResponse<any>> {
+        return $api.post<any[]>('/get-okrb-name', {
+                codes: codes,
+        })
+    }
     static async getUnits(): Promise<AxiosResponse<any>> {
         return $api.get<any[]>('/getUnits')
     }

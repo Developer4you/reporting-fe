@@ -25,8 +25,6 @@ export type ReportsType = {
 const GuestPage: FC = () => {
     const {store} = useContext(Context)
 
-
-
     useEffect(() => {
         store.getUnits()
         }, [])
@@ -36,34 +34,35 @@ const GuestPage: FC = () => {
     )
 
     return (<>
-            <Container maxWidth="xl" sx={{
-                padding: 2,
-                minHeight: "100vh"
+            <div style={{
+                padding: 0,
+                minHeight: "100vh",
             }}>
-                <header>
-                    <Paper sx={{
-                        marginBottom: 2,
-                        textAlign: "right",
-                        display: "flex",
-                        justifyContent: "end"
-                    }}>
-                        <Button></Button>
-                        <Typography sx={{
-                            marginRight: 5
-                        }}>
-                            {store.isAuth ? `Вы зашли как гость` :
-                                <Navigate replace to="/"/>}
-                        </Typography>
-                        <div>{store.user.isActivated ? '' : 'ПОДТВЕРДИТЕ АККАУНТ!!!'}</div>
-                        <Button variant="contained" onClick={() => store.logout()}>Выйти</Button>
-                    </Paper>
-                </header>
+                {/*<header>*/}
+                {/*    <Paper sx={{*/}
+                {/*        marginBottom: 2,*/}
+                {/*        textAlign: "right",*/}
+                {/*        display: "flex",*/}
+                {/*        justifyContent: "end"*/}
+                {/*    }}>*/}
+                {/*        <Button></Button>*/}
+                {/*        <Typography sx={{*/}
+                {/*            marginRight: 5*/}
+                {/*        }}>*/}
+                {/*            {store.isAuth ? `Вы зашли как гость` :*/}
+                {/*                <Navigate replace to="/"/>}*/}
+                {/*        </Typography>*/}
+                {/*        <div>{store.user.isActivated ? '' : 'ПОДТВЕРДИТЕ АККАУНТ!!!'}</div>*/}
+                {/*        <Button variant="contained" onClick={() => store.logout()}>Выйти</Button>*/}
+                {/*    </Paper>*/}
+                {/*</header>*/}
                 <Paper sx={{
-                    padding: "20px",
+                    padding: "10px",
+                    margin: "0",
                 }}>
                     <PurchasesComponent />
                 </Paper>
-            </Container>
+            </div>
 
         </>
     );
