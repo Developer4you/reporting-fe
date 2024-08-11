@@ -93,7 +93,7 @@ const PurchasesComponent: React.FC = () => {
                         onChange={(event, checked) => handleChange(checked)}
                         inputProps={{'aria-label': 'controlled'}}
                     />
-                    <span>Режим точных совпадений</span>
+                    <span>Точные совпадения</span>
                 </div>
                 {/*{(data?.length) && !isLoading && <Button variant="contained"*/}
                 {/*                                         onClick={() => store.countAndSortOKRB(searchTerm, data)}>Подобрать*/}

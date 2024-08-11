@@ -1,0 +1,26 @@
+.formWrapper {
+    width: 500px;
+    border: 1px solid grey
+}
+
+.inputBox {
+    display: flex;
+    width: 100%;
+    border: 1px solid grey
+}
+
+.inputBox >* {
+    flex: 1;
+}
+.inputBox >input {
+    text-align: right;
+}
+
+.inputWithoutArrows {
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+
+
+
+

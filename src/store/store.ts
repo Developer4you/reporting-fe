@@ -1,13 +1,13 @@
 import {IUser} from "../models/IUser";
 import {makeAutoObservable} from "mobx";
 import AuthService from "../services/AuthService";
-import axios from 'axios';
 import {AuthResponse} from "../models/response/AuthRethponse";
 import {API_URL} from "../http";
 import ReportService from "../services/ReportService";
 import {AllReportsDateType, IUserReport, RowType} from "../models/IUserReport";
 import { Buffer } from 'buffer';
 import GiasService from "../services/GiasService";
+import axios from "axios";
 
 type RequestStatusType = 'empty'| 'success'| 'waiting'| 'error'
 type PositionType = {position: string, position_name: string, okrb: string}
@@ -39,6 +39,15 @@ type OKRBcodesType = {
     nameOKRB:string
     count:number
 }
+export type ProductType = {
+    productId: string
+    productName:string
+    unitName:string
+    count: number
+    productInfo:string
+    nameOKRB:string
+    codeOKRB: string
+}
 export default class Store {
     user = {} as IUser;
     report = {} as IUserReport
@@ -56,9 +65,19 @@ export default class Store {
     okrbCodes = [] as OKRBcodesType[]
     contractsPositions = [] as any[]
     exactMatchMode = true
+    productItem = {} as ProductType
+    productList = [] as ProductType[]
 
     constructor() {
         makeAutoObservable(this)
+    }
+
+    setProductItem(val: ProductType){
+        this.productItem=val
+    }
+
+    setProductList(val:ProductType[]){
+        this.productList=[...val]
     }
 
     setExactMatchMode(value:boolean){

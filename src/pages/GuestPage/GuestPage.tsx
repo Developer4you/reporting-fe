@@ -5,6 +5,9 @@ import loader from "../../assets/loader.gif";
 import {observer} from "mobx-react-lite";
 import {Box, Button, Container, Link, Paper, Typography} from "@mui/material";
 import PurchasesComponent from "../../components/PurchasesComponent";
+import ProductForm from "../../components/ProductForm/ProductForm";
+import {ProductType} from "../../store/store";
+import s from "./GuestPage.module.css"
 
 export type ReportType = {
     diesel: number
@@ -24,20 +27,18 @@ export type ReportsType = {
 
 const GuestPage: FC = () => {
     const {store} = useContext(Context)
+    const [showForm, setShowForm] = useState<boolean>(true);
 
     useEffect(() => {
         store.getUnits()
         }, [])
-
-    if (store.isLoading) return (
-        <img src={loader} alt="loader" style={{margin: "40vh 40vw"}}/>
-    )
 
     return (<>
             <div style={{
                 padding: 0,
                 minHeight: "100vh",
             }}>
+                <span>
                 {/*<header>*/}
                 {/*    <Paper sx={{*/}
                 {/*        marginBottom: 2,*/}
@@ -56,11 +57,35 @@ const GuestPage: FC = () => {
                 {/*        <Button variant="contained" onClick={() => store.logout()}>Выйти</Button>*/}
                 {/*    </Paper>*/}
                 {/*</header>*/}
+                </span>
+                <button className={s.showFormButton}
+                    onClick={()=>setShowForm((prev)=>!prev)}>
+                    {showForm?'Скрыть форму добавление продукта':'Показать форму добавление продукта'}
+                </button>
                 <Paper sx={{
                     padding: "10px",
                     margin: "0",
                 }}>
-                    <PurchasesComponent />
+                    <div className={s.flexWrap}>
+                        <div className={showForm?s.flexItem1:s.flexItem0}>
+                            <ProductForm />
+                            <h3>Список продуктов</h3>
+                            <ol>
+                                {store.productList.map((product:ProductType, index:number) => (
+                                    <li key={index}>
+                                        {product.productName} - {product.productInfo} - {product.count}
+                                        - {product.unitName} - {product.codeOKRB}
+                                    </li>
+                                ))}
+                            </ol>
+                        </div>
+                        <div className={s.flexItem2}>
+                            <PurchasesComponent />
+                        </div>
+                    </div>
+
+
+                    {/*<PurchasesComponent />*/}
                 </Paper>
             </div>
 

@@ -1,0 +1,33 @@
+.flexWrap {
+    display: flex;
+    transition: all 0.5s ease;
+}
+
+.flexItem0 {
+    width: 0;
+    overflow: hidden;
+    transition: all 0.5s ease;
+}
+
+.flexItem1 {
+    flex: 1;
+    margin: 5px;
+    transition: all 0.5s ease;
+}
+.flexItem2 {
+    flex: 2;
+    margin: 5px;
+    transition: all 0.5s ease;
+}
+
+.showFormButton {
+    width: 30vw;
+    text-align: center;
+    margin-left: 20px;
+    background-color: #00aaff; /* Голубой цвет кнопки */
+    color: white; /* Цвет текста на кнопке */
+    border: none; /* Убирает границу */
+    border-radius: 5px; /* Скругляет углы */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Легкая тень */
+    transition: box-shadow 0.3s ease; /* Плавный переход для тени */
+}
