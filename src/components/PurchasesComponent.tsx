@@ -30,7 +30,7 @@ const PurchasesComponent: React.FC = () => {
             const elementHeightPx = element.getBoundingClientRect().height;
 
             // Преобразуем в миллиметры
-            const dpi = 96; // стандартное разрешение экрана
+            const dpi = 96/3; // стандартное разрешение экрана
             const elementWidthMm = (elementWidthPx / dpi) * 25.4;
             const elementHeightMm = (elementHeightPx / dpi) * 25.4;
 
