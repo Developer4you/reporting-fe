@@ -25,12 +25,11 @@ const PurchasesComponent: React.FC = () => {
     const generatePDF = () => {
         const element = document.getElementById("pdf-content");
         if (element) {
-            // Получаем ширину элемента в пикселях
             const elementWidthPx = element.getBoundingClientRect().width;
             const elementHeightPx = element.getBoundingClientRect().height;
 
             // Преобразуем в миллиметры
-            const dpi = 10; // стандартное разрешение экрана
+            const dpi = 96; // стандартное разрешение экрана
             const elementWidthMm = (elementWidthPx / dpi) * 25.4;
             const elementHeightMm = (elementHeightPx / dpi) * 25.4;
 
@@ -46,8 +45,7 @@ const PurchasesComponent: React.FC = () => {
 
                 pdf.addImage(imgData, "PNG", 0, 0, elementWidthMm, elementHeightMm);
                 pdf.save("download.pdf");
-            });
-        }
+            });}
     };
     const handleChange = (val: boolean) => {
         store.setExactMatchMode(val);
@@ -57,7 +55,7 @@ const PurchasesComponent: React.FC = () => {
         setItemCount(count);
     };
 
-    const getEmailsHandler = (okrb: string) => {
+    const getEmailsHandler = (okrb:string) => {
         store.setEmails('')
         store.getEmails(okrb)
         setCodeOKRB(okrb)
@@ -128,8 +126,7 @@ const PurchasesComponent: React.FC = () => {
                 {/*                                         onClick={() => store.countAndSortOKRB(searchTerm, data)}>Подобрать*/}
                 {/*    код ОКРБ</Button>}*/}
                 <Button variant="contained" onClick={generatePDF}
-                sx={{height:"30px"}}
-                >Сохранить PDF</Button>
+                sx={{height:'30px'}}>Создать PDF</Button>
                 {/*<ReactToPrint*/}
                 {/*    trigger={() => <Button variant="contained">Печать результата</Button>}*/}
                 {/*    content={() => componentRef.current}*/}
@@ -209,9 +206,8 @@ const PurchasesComponent: React.FC = () => {
                 )}
             <div className={s.searchPurchasesBox}>
                 <div className={s.contractInfo}>
-                    {store.okrbCodes.map(e => <div key={e.codeOKRB} onClick={() => getEmailsHandler(e.codeOKRB)}
-                                                   style={{backgroundColor: (e.codeOKRB === codeOKRB) ? "pink" : "unset"}}
-                                                   className={s.okrb}>
+                    {store.okrbCodes.map(e => <div key={e.codeOKRB} onClick={()=>getEmailsHandler(e.codeOKRB)}
+                    style={{backgroundColor:(e.codeOKRB===codeOKRB)?"pink":"unset"}} className={s.okrb}>
                         <div className={s.contractLabel}>{` (встретилось ${e.count})`}</div>
                         <span>Код ОКРБ:</span>
                         <span>{`${e.codeOKRB}     `}</span>
@@ -220,9 +216,7 @@ const PurchasesComponent: React.FC = () => {
                 </div>
                 <div className={s.selectedItemsBox}>
 
-                    {codeOKRB && store.isPending ?
-                        <img src={loader} alt="loader" style={{margin: "0px 5px", width: "100px"}}/> :
-                        <div dangerouslySetInnerHTML={{__html: store.emails}}/>}
+                    {codeOKRB&&store.isPending?<img src={loader} alt="loader" style={{margin: "0px 5px", width: "100px"}}/>:<div dangerouslySetInnerHTML={{ __html: store.emails }} />}
                 </div>
             </div>
 
